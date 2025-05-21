@@ -5,31 +5,23 @@
 
 /* Interrupt Vector Table */
 .section .vectors, "ax"
-    .word Reset_Handler
-    .word Undef_Handler
-    .word SWI_Handler
-    .word Prefetch_Abort_Handler
-    .word Data_Abort_Handler
-    .word 0                  /* Reserved vector */
-    .word IRQ_Handler
-    .word FIQ_Handler
+.word Reset_Handler
+.word Undef_Handler
+.word SWI_Handler
+.word Prefetch_Abort_Handler
+.word Data_Abort_Handler
+.word 0                  /* Reserved vector */
+.word IRQ_Handler
+.word FIQ_Handler
 
 
 /* Code Section */
 .section .text
 .arm
 
-/* Temporary SystemInit stub (to be replaced later) */
-.weak SystemInit
-.func SystemInit
-SystemInit:
-    /* No clock configuration - using default internal oscillator (HSI ~4MHz) */
-    BX LR                /* Just return */
-.endfunc
-
 /* System Reset Handler */
 .global Reset_Handler
-.func Reset_Handler
+.type  Reset_Handler, %function
 Reset_Handler:
     /* Initialize stack pointer */
     LDR SP, =_estack
@@ -53,7 +45,7 @@ Reset_Handler:
     BX R0
     /* Return security */
     B .
-.endfunc
+.size Reset_Handler, . - Reset_Handler
 
 /* Data Section Copy Routine */
 CopyData:
@@ -62,6 +54,7 @@ CopyData:
     LDR R3, [R2], #4
     STR R3, [R0], #4
     B CopyData
+
 CopyEnd:
     BX LR
 
@@ -76,13 +69,18 @@ ZeroLoop:
 ZeroEnd:
     BX LR
 
-/* Default Exception Handlers */
-.weak NMI_Handler
-NMI_Handler:
-    B .
+
+/* Temporary SystemInit stub */
+.weak SystemInit
+SystemInit:
+    BX LR
 
 .weak HardFault_Handler
 HardFault_Handler:
+    B .
+
+.weak Undef_Handler
+Undef_Handler:
     B .
 
 .weak SWI_Handler
