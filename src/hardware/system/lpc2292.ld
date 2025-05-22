@@ -1,153 +1,173 @@
-/* linker_script.ld - Linker script for LPC2292 (ARM7TDMI) with 64KB RAM */
-
-MEMORY
-{
-    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 256K    /* Flash memory */
-    RAM (rwx)   : ORIGIN = 0x40000000, LENGTH = 64K     /* 64KB RAM */
-}
-
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-/* Define stack sizes */
-_STACK_SIZE = 0x2000;       /* 8KB main stack */
-_IRQ_STACK_SIZE = 0x800;    /* 2KB IRQ stack */
-_FIQ_STACK_SIZE = 0x400;     /* 1KB FIQ stack */
-_SVC_STACK_SIZE = 0x400;     /* 1KB SVC stack */
-_ABT_STACK_SIZE = 0x400;     /* 1KB ABT stack */
-_UND_STACK_SIZE = 0x400;     /* 1KB UND stack */
+_estack = ORIGIN(RAM) + LENGTH(RAM);
 
-/* Section Definitions */
+_user_stack_size = 0x1000
+_fiq_stack_size = 0x400
+_irq_stack_size = 0x400
+_spv_stack_size = 0x800
+_abt_stack_size = 0x200
+_und_stack_size = 0x200
+
+_heap_size = 0x400
+
+MEMORY
+{
+    RAM (xrw)      : ORIGIN = 0x40000000, LENGTH = 64K
+    FLASH (rx)      : ORIGIN = 0x00000000, LENGTH = 512K
+}
+
 SECTIONS
 {
-    /* Interrupt Vector Table goes first into FLASH */
-    .vectors :
-    {
-        . = ALIGN(4);
-        KEEP(*(.vectors))
-        . = ALIGN(4);
-    } > FLASH
+  /* The startup code goes first into FLASH */
+  .isr_vector :
+  {
+    . = ALIGN(4);
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } >FLASH
 
-    /* Code section */
-    .text :
-    {
-        . = ALIGN(4);
-        *(.text)
-        *(.text*)
-        *(.glue_7)         /* glue arm to thumb code */
-        *(.glue_7t)        /* glue thumb to arm code */
-        *(.eh_frame)
-        
-        KEEP(*(.init))
-        KEEP(*(.fini))
-        
-        . = ALIGN(4);
-        _etext = .;        /* end of text section */
-    } > FLASH
+  /* The program code and other data goes into FLASH */
+  .text :
+  {
+    . = ALIGN(4);
+    *(.text)
+    *(.text*)
+    *(.glue_7)
+    *(.glue_7t)
+    *(.eh_frame)    /* for debug */
 
-    /* Read-only data */
-    .rodata :
-    {
-        *(.rodata)
-        *(.rodata*)
-        . = ALIGN(4);
-    } > FLASH
+    . = ALIGN(4);
+    _etext = .;
+  } >FLASH
 
-    /* ARM.exidx section for exception handling */
-    .ARM.exidx :
-    {
-        __exidx_start = .;
-        *(.ARM.exidx*)
-        __exidx_end = .;
-    } > FLASH
+  /* Constant data goes into FLASH */
+  .rodata :
+  {
+    . = ALIGN(4);
+    *(.rodata)
+    *(.rodata*)
+    . = ALIGN(4);
+  } >FLASH
 
-    /* Initialized data sections - goes into RAM, load address in FLASH */
-    _sidata = LOADADDR(.data);
-    .data : AT ( _sidata )
-    {
-        . = ALIGN(4);
-        _sdata = .;
-        *(.data)
-        *(.data*)
-        . = ALIGN(4);
-        _edata = .;
-    } > RAM
+  /* For debug */
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
+  .ARM : {
+    __exidx_start = .;
+    *(.ARM.exidx*)
+    __exidx_end = .;
+  } >FLASH
 
-    /* Uninitialized data section (BSS) */
-    .bss :
-    {
-        . = ALIGN(4);
-        _sbss = .;
-        __bss_start__ = .;
-        *(.bss)
-        *(.bss*)
-        *(COMMON)
-        . = ALIGN(4);
-        _ebss = .;
-        __bss_end__ = .;
-    } > RAM
+  /* used by the startup to initialize data */
+  _sidata = LOADADDR(.data);
 
-    /* Heap */
-    .heap :
-    {
-        . = ALIGN(4);
-        __end__ = .;
-        PROVIDE(end = .);
-        __HeapBase = .;
-        . = ORIGIN(RAM) + LENGTH(RAM) - _STACK_SIZE - _IRQ_STACK_SIZE - _FIQ_STACK_SIZE 
-                          - _SVC_STACK_SIZE - _ABT_STACK_SIZE - _UND_STACK_SIZE;
-        __HeapLimit = .;
-    } > RAM
+  /* Initialized data sections goes into RAM, load LMA copy after code */
+  .data : 
+  {
+    . = ALIGN(8);
+    _sdata = .;
+    *(.data)
+    *(.data*)
 
-    /* Stack sections */
-    .stack :
-    {
-        . = ALIGN(4);
-        _estack = .;
-        
-        /* Main stack */
-        . = . + _STACK_SIZE;
-        __stack_top__ = .;
-        
-        /* IRQ stack */
-        __irq_stack_bottom__ = .;
-        . = . + _IRQ_STACK_SIZE;
-        __irq_stack_top__ = .;
-        
-        /* FIQ stack */
-        __fiq_stack_bottom__ = .;
-        . = . + _FIQ_STACK_SIZE;
-        __fiq_stack_top__ = .;
-        
-        /* SVC stack */
-        __svc_stack_bottom__ = .;
-        . = . + _SVC_STACK_SIZE;
-        __svc_stack_top__ = .;
-        
-        /* ABT stack */
-        __abt_stack_bottom__ = .;
-        . = . + _ABT_STACK_SIZE;
-        __abt_stack_top__ = .;
-        
-        /* UND stack */
-        __und_stack_bottom__ = .;
-        . = . + _UND_STACK_SIZE;
-        __und_stack_top__ = .;
-    } > RAM
+    . = ALIGN(8);
+    _edata = .;
+  } >RAM AT> FLASH
 
-    /* Remove information from the standard libraries */
-    /DISCARD/ :
-    {
-        libc.a ( * )
-        libm.a ( * )
-        libgcc.a ( * )
-    }
+  
+  /* Uninitialized data section */
+  
+  .bss :
+  {
+    . = ALIGN(8);
+    _sbss = .;
+    *(.bss)
+    *(.bss*)
+    *(COMMON)
 
-    /* Provide additional symbols if needed */
-    PROVIDE(__stack = __stack_top__);
-    PROVIDE(__irq_stack = __irq_stack_top__);
-    PROVIDE(__fiq_stack = __fiq_stack_top__);
-    PROVIDE(__svc_stack = __svc_stack_top__);
-    PROVIDE(__abt_stack = __abt_stack_top__);
-    PROVIDE(__und_stack = __und_stack_top__);
+    . = ALIGN(8);
+    _ebss = .;
+  } >RAM
+
+  .heap (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _heap_start = .;
+    . += _heap_size;
+    _heap_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  .stack_user (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _user_stack_start = .;
+    . += _user_stack_size;
+    _user_stack_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  .stack_fiq (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _fiq_stack_start = .;
+    . += _fiq_stack_size;
+    _fiq_stack_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  .stack_irq (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _irq_stack_start = .;
+    . += _irq_stack_size;
+    _irq_stack_end = .;
+  . = ALIGN(8);
+  } > RAM
+
+  .stack_spv (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _spv_stack_start = .;
+    . += _spv_stack_size;
+    _spv_stack_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  .stack_abt (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _abt_stack_start = .;
+    . += _abt_stack_size;
+    _abt_stack_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  .stack_und (NOLOAD) : ALIGN(8)
+  {
+    . = ALIGN(8);
+    _und_stack_start = .;
+    . += _und_stack_size;
+    _und_stack_end = .;
+    . = ALIGN(8);
+  } > RAM
+
+  _ram_used = MAX(_heap_end, _user_stack_end, _fiq_stack_end,
+                     _irq_stack_end, _spv_stack_end, _abt_stack_end,
+                     _und_stack_end)
+  
+
+  ASSERT(_ram_used <= _estack, "Error: RAM overflow: heap + stacks exceed RAM")
+
+  /* Remove information from the standard libraries */
+  /DISCARD/ :
+  {
+    libc.a ( * )
+    libm.a ( * )
+    libgcc.a ( * )
+  }
+  /* Additional information for debug */
+  .ARM.attributes 0 : { *(.ARM.attributes) }
 }
+
+

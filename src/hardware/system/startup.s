@@ -1,10 +1,9 @@
-/* TODO: ADD STACK SWITCHING  */
 .syntax unified
 .arch arm7tdmi
 .arm
 
 /* Interrupt Vector Table */
-.section .vectors, "ax"
+.section .isr_vector, "ax"
 .word Reset_Handler
 .word Undef_Handler
 .word SWI_Handler
@@ -23,8 +22,44 @@
 .global Reset_Handler
 .type  Reset_Handler, %function
 Reset_Handler:
-    /* Initialize stack pointer */
-    LDR SP, =_estack
+
+    /* todo: check it */
+
+    /* Set SP for Undefined mode (0x1B) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x1B
+    MSR CPSR_c, R0
+    LDR SP, =_und_stack_end
+
+    /* Set SP for FIQ mode (0x11) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x11
+    MSR CPSR_c, R0
+    LDR SP, =_fiq_stack_end
+
+    /* Set SP for IRQ mode (0x12) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x12
+    MSR CPSR_c, R0
+    LDR SP, =_irq_stack_end
+
+    /* Set SP for Abort mode (0x17) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x17
+    MSR CPSR_c, R0
+    LDR SP, =_abt_stack_end
+
+    /* Work in Supervisor mode as deafult */
+    /* Set SP for Supervisor mode (0x13) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x13
+    MSR CPSR_c, R0
+    LDR SP, =_spv_stack_end
     
     /* Copy initialized data from FLASH to RAM */
     LDR R0, =_sdata
@@ -74,10 +109,6 @@ ZeroEnd:
 .weak SystemInit
 SystemInit:
     BX LR
-
-.weak HardFault_Handler
-HardFault_Handler:
-    B .
 
 .weak Undef_Handler
 Undef_Handler:
