@@ -1,5 +1,4 @@
 .syntax unified
-.arch arm7tdmi
 .arm
 
 /* Interrupt Vector Table */

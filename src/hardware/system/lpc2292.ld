@@ -3,14 +3,14 @@ ENTRY(Reset_Handler)
 
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 
-_user_stack_size = 0x1000
-_fiq_stack_size = 0x400
-_irq_stack_size = 0x400
-_spv_stack_size = 0x800
-_abt_stack_size = 0x200
-_und_stack_size = 0x200
+_user_stack_size = 0x1000;
+_fiq_stack_size = 0x400;
+_irq_stack_size = 0x400;
+_spv_stack_size = 0x800;
+_abt_stack_size = 0x200;
+_und_stack_size = 0x200;
 
-_heap_size = 0x400
+_heap_size = 0x400;
 
 MEMORY
 {
@@ -122,7 +122,7 @@ SECTIONS
     _irq_stack_start = .;
     . += _irq_stack_size;
     _irq_stack_end = .;
-  . = ALIGN(8);
+    . = ALIGN(8);
   } > RAM
 
   .stack_spv (NOLOAD) : ALIGN(8)
@@ -152,12 +152,7 @@ SECTIONS
     . = ALIGN(8);
   } > RAM
 
-  _ram_used = MAX(_heap_end, _user_stack_end, _fiq_stack_end,
-                     _irq_stack_end, _spv_stack_end, _abt_stack_end,
-                     _und_stack_end)
-  
-
-  ASSERT(_ram_used <= _estack, "Error: RAM overflow: heap + stacks exceed RAM")
+  ASSERT(_und_stack_end <= _estack, "Error: RAM overflow: heap + stacks exceed RAM")
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
