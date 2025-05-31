@@ -79,6 +79,14 @@
  * PRIVATE FUNCTION PROTOTYPES
  **********************************************************************************************************************/
 
+/**
+ * @brief Updates the system core clock frequency based on the current PLL configuration.
+ *
+ * This function calculates the system core clock frequency based on the PLL settings
+ * and updates the global variable `system_core_clock`.
+ */
+static void system_clock_update(void);
+
 /**********************************************************************************************************************
  * PRIVATE DATA
  **********************************************************************************************************************/
@@ -95,6 +103,30 @@
  * PRIVATE FUNCTIONS
  **********************************************************************************************************************/
 
+static void system_clock_update(void)
+{
+    extern uint32_t system_core_clock;
+    const uint32_t pll_status_mask = (1 << PLLCON_PLLC_BIT) | (1 << PLLCON_PLLE_BIT);
+
+    if ((PLLCON & pll_status_mask) == pll_status_mask)
+    {
+        const uint32_t msel = ((PLLCFG >> PLLCFG_MSEL_BIT) & ((1U << PLLCFG_MSEL_WIDTH) - 1)) + 1;
+        const uint32_t psel_code = (PLLCFG >> PLLCFG_PSEL_BIT) & ((1U << PLLCFG_PSEL_WIDTH) - 1);
+        const uint32_t psel = 1U << psel_code;
+
+        system_core_clock = (12000000UL * msel) / psel;
+        return;
+    }
+
+    if (PLLCON & (1 << PLLCON_PLLE_BIT))
+    {
+        system_core_clock = 12000000UL;
+        return;
+    }
+
+    system_core_clock = 4000000UL;
+}
+
 /**********************************************************************************************************************
  * PUBLIC FUNCTIONS
  **********************************************************************************************************************/
@@ -104,8 +136,11 @@ uint8_t system_clock_init(void)
     /* Enable PLL (not connect) */
     PLLCON = ((1 & PLLCON_PLLE_WIDTH) << PLLCON_PLLE_BIT);
 
-    /* Set CCLK 60 MHz */
-    PLLCFG = ((4 & PLLCFG_MSEL_WIDTH) << PLLCFG_MSEL_BIT) | ((0 & PLLCFG_PSEL_WIDTH) << PLLCFG_PSEL_BIT);
+    /* Set CCLK = (12 MHz * 5) / 1 = 60 MHz */
+    const uint32_t msel_val = 5 - 1; /* M = 5 */
+    const uint32_t psel_code = 0;    /* P = 1 (2^0) */
+
+    PLLCFG = (msel_val << PLLCFG_MSEL_BIT) | (psel_code << PLLCFG_PSEL_BIT);
 
     PLLFEED = PLLFEED_SEQUENCE_AA;
     PLLFEED = PLLFEED_SEQUENCE_55;
@@ -124,6 +159,8 @@ uint8_t system_clock_init(void)
 
     /* (PCLK = CCLK / 2 = 30 MHz) */
     APBDIV = APBDIV_HALF;
+
+    system_clock_update();
 
     return 0;
 }

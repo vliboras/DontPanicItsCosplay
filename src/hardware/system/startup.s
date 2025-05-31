@@ -72,7 +72,7 @@ Reset_Handler:
     BL ZeroBSS
 
     /* Hardware initialization */
-    BL SystemInit
+    BL system_init
 
     /* Transfer control to main application */
     LDR R0, =main
@@ -104,9 +104,9 @@ ZeroEnd:
     BX LR
 
 
-/* Temporary SystemInit stub */
-.weak SystemInit
-SystemInit:
+/* Temporary system_init stub */
+.weak system_init
+system_init:
     BX LR
 
 .weak Undef_Handler

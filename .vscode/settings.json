@@ -8,7 +8,8 @@
         "stdint.h": "c",
         "cstdint": "c",
         "lpc2292.h": "c",
-        "system_clock.h": "c"
+        "system_clock.h": "c",
+        "uart.h": "c"
     },
     "actionButtons": {
         "commands": [
