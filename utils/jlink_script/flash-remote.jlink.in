@@ -1,0 +1,8 @@
+ip @IP_ADDR@
+device @mcu_def@
+si JTAG
+JTAGConf -1,-1
+speed 1000
+loadfile @HEX_FILE@
+r
+g

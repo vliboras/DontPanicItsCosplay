@@ -1,0 +1,62 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 120
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+IndentCaseLabels: true
+
+InsertNewlineAtEOF: true
+PointerAlignment: Right
+LineEnding: LF
+
+BreakBeforeTernaryOperators: true
+AlignConsecutiveMacros: Consecutive
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: false
+  AfterCaseLabel: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority: 2
+  - Regex: '^(<|"(gtest|gmock|isl|json)/)'
+    Priority: 3
+  - Regex: '.*'
+    Priority: 1
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: true
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
+SpacesInContainerLiterals: true
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+Standard: c++11
+
+BinPackArguments: false
+BinPackParameters: false
+PenaltyReturnTypeOnItsOwnLine: 9999999
+...

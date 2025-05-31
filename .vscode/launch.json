@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cmake",
+            "request": "launch",
+            "name": "CMake: Configure project",
+            "cmakeDebugType": "configure",
+            "clean": false,
+            "configureAll": false
+        },
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "Debug Local JLink",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.elf",
+            "loadFiles": [
+                "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.hex"
+            ],
+            "symbolFiles": [
+                "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.elf"
+            ],
+            "servertype": "jlink",
+            "serverpath": "D:/Tools/jlink/JLinkGDBServerCL.exe",
+            "device": "LPC2292",
+            "interface": "jtag",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "serverArgs": [
+                "-speed",
+                "1000"
+            ]
+        },
+    ]
+}

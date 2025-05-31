@@ -1,7 +1,29 @@
 {
     "cmake.configureSettings": {
-    
         "CMAKE_TOOLCHAIN_FILE": "cmake/arm-gcc-toolchain.cmake"
     },
-    "cmake.buildDirectory": "${workspaceFolder}/cmake-build-image"
+    "cmake.buildDirectory": "${workspaceFolder}/cmake-build-image",
+    "files.associations": {
+        "stdint-gcc.h": "c",
+        "stdint.h": "c",
+        "cstdint": "c",
+        "lpc2292.h": "c",
+        "system_clock.h": "c"
+    },
+    "actionButtons": {
+        "commands": [
+            {
+                "name": "Flash JLink",
+                "command": "JLink -commanderscript cmake-build-image/src/application/flash.jlink"
+            },
+            {
+                "name": "Remote Flash JLink",
+                "command": "JLink -commanderscript cmake-build-image/firmware/application/flash-remote.jlink"
+            }
+        ],
+        "defaultColor": "white",
+        "reloadButton": "↻",
+        "loadNpmCommands": false
+    },
+    "cpplint.cpplintPath": ""
 }
