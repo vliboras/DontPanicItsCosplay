@@ -9,7 +9,8 @@
         "cstdint": "c",
         "lpc2292.h": "c",
         "system_clock.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "task.h": "c"
     },
     "actionButtons": {
         "commands": [

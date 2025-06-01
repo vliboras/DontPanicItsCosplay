@@ -1,16 +1,15 @@
 /**
- * @file main.c
+ * @file freertos_hooks.c
  *
- * @brief Application main loop
+ * @brief Freertos application hooks
  *
- * @ingroup application
+ * @ingroup middleware
  */
 
 /**********************************************************************************************************************
  * INCLUDES
  **********************************************************************************************************************/
 
-#include "bsp.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -18,17 +17,14 @@
  * PUBLIC FUNCTIONS
  **********************************************************************************************************************/
 
-/**
- * @brief  The application entry point.
- * @retval none
- */
-int main(void)
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-    bsp_init();
-    vTaskStartScheduler();
-    while (1)
-    {
-    }
+    (void)xTask;
+    (void)pcTaskName;
+
+    taskDISABLE_INTERRUPTS();
+    for (;;)
+        ;
 }
 
 /**********************************************************************************************************************

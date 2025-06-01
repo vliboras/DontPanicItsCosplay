@@ -21,4 +21,9 @@ if (CMAKE_CROSSCOMPILING)
   set(FREERTOS_PORT "GCC_ARM7_LPC2000" CACHE STRING "" FORCE)
 endif()
 
+add_library(freertos_hooks STATIC freertos_hooks.c)
+target_link_libraries(freertos_hooks PRIVATE freertos_kernel)
+target_include_directories(freertos_hooks PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+
 add_subdirectory(FreeRTOS-Kernel)
