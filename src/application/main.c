@@ -18,6 +18,16 @@
  * PUBLIC FUNCTIONS
  **********************************************************************************************************************/
 
+void dummy_function(void *param)
+{
+    static uint32_t counter = 0;
+    while (1)
+    {
+        counter++;
+        vTaskDelay(100);
+    }
+}
+
 /**
  * @brief  The application entry point.
  * @retval none
@@ -25,6 +35,7 @@
 int main(void)
 {
     bsp_init();
+    xTaskCreate(dummy_function, "Dummy", 128, NULL, 1, NULL);
     vTaskStartScheduler();
     while (1)
     {

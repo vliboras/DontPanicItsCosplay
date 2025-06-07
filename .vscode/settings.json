@@ -1,8 +1,4 @@
 {
-    "cmake.configureSettings": {
-        "CMAKE_TOOLCHAIN_FILE": "cmake/arm-gcc-toolchain.cmake"
-    },
-    "cmake.buildDirectory": "${workspaceFolder}/cmake-build-image",
     "files.associations": {
         "stdint-gcc.h": "c",
         "stdint.h": "c",
@@ -27,5 +23,5 @@
         "reloadButton": "↻",
         "loadNpmCommands": false
     },
-    "cpplint.cpplintPath": ""
+    "cortex-debug.variableUseNaturalFormat": true
 }

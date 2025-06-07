@@ -18,7 +18,7 @@
  **********************************************************************************************************************/
 
 /** @brief System core clock frequency in Hz */
-uint32_t system_core_clock = 4000000;
+static uint32_t system_core_clock = 4000000;
 
 /**********************************************************************************************************************
  * PUBLIC FUNCTIONS
@@ -34,6 +34,20 @@ uint32_t system_core_clock = 4000000;
 uint32_t system_clock_get(void)
 {
     return system_core_clock;
+}
+
+/**
+ * @brief Sets the system clock frequency.
+ *
+ * This function sets the system clock frequency to the specified value.
+ * It does not perform any hardware configuration; it simply updates the
+ * global variable representing the system clock frequency.
+ *
+ * @param frequency The desired system clock frequency in Hz
+ */
+void system_clock_set(uint32_t frequency)
+{
+    system_core_clock = frequency;
 }
 
 /**

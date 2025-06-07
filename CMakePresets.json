@@ -1,0 +1,102 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 28,
+        "patch": 1
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "LPC2292 + SDK2.0",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/arm-gcc-toolchain.cmake"
+            }
+        },
+        {
+            "name": "debug",
+            "inherits": [
+                "default"
+            ],
+            "displayName": "LPC2292 SDK2.0 (Debug)",
+            "description": "LPC2292 SDK2.0board image (Debug)",
+            "binaryDir": "${sourceDir}/cmake-build-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "inherits": [
+                "default"
+            ],
+            "displayName": "LPC2292 SDK2.0 (Release)",
+            "description": "LPC2292 SDK2.0board image (Release)",
+            "binaryDir": "${sourceDir}/cmake-build-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "relwithdebinfo",
+            "inherits": [
+                "default"
+            ],
+            "displayName": "LPC2292 SDK2.0 (RelWithDebInfo)",
+            "description": "LPC2292 SDK2.0board image (RelWithDebInfo)",
+            "binaryDir": "${sourceDir}/cmake-build-relwithdebinfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "minsizerel",
+            "inherits": [
+                "default"
+            ],
+            "displayName": "LPC2292 SDK2.0 (MinSizeRel)",
+            "description": "LPC2292 SDK2.0board image (MinSizeRel)",
+            "binaryDir": "${sourceDir}/cmake-build-minsizerel",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "MinSizeRel"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "configurePreset": "debug",
+            "configuration": "Debug",
+            "description": "Build with debug information and optimizations disabled",
+            "targets": "lpc2292-sdk2"
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "configurePreset": "release",
+            "configuration": "Release",
+            "description": "Build with optimizations for speed",
+            "targets": "lpc2292-sdk2"
+        },
+        {
+            "name": "minsize",
+            "displayName": "Min Size Release",
+            "configurePreset": "minsizerel",
+            "configuration": "MinSizeRel",
+            "description": "Build with optimizations for minimal size",
+            "targets": "lpc2292-sdk2"
+        },
+        {
+            "name": "relwithdebinfo",
+            "displayName": "Release with Debug Info",
+            "configurePreset": "relwithdebinfo",
+            "configuration": "RelWithDebInfo",
+            "description": "Build with optimizations and debug information",
+            "targets": "lpc2292-sdk2"
+        }
+    ],
+    "testPresets": []
+}

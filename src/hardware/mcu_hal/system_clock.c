@@ -105,7 +105,7 @@ static void system_clock_update(void);
 
 static void system_clock_update(void)
 {
-    extern uint32_t system_core_clock;
+    extern void system_clock_set(uint32_t frequency);
     const uint32_t pll_status_mask = (1 << PLLCON_PLLC_BIT) | (1 << PLLCON_PLLE_BIT);
 
     if ((PLLCON & pll_status_mask) == pll_status_mask)
@@ -114,17 +114,17 @@ static void system_clock_update(void)
         const uint32_t psel_code = (PLLCFG >> PLLCFG_PSEL_BIT) & ((1U << PLLCFG_PSEL_WIDTH) - 1);
         const uint32_t psel = 1U << psel_code;
 
-        system_core_clock = (12000000UL * msel) / psel;
+        system_clock_set((12000000UL * msel) / psel);
         return;
     }
 
     if (PLLCON & (1 << PLLCON_PLLE_BIT))
     {
-        system_core_clock = 12000000UL;
+        system_clock_set(12000000UL);
         return;
     }
 
-    system_core_clock = 4000000UL;
+    system_clock_set(4000000UL);
 }
 
 /**********************************************************************************************************************

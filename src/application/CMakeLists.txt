@@ -13,7 +13,7 @@ target_link_options(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME}
 					PUBLIC
-					system bsp
+					system interrupts bsp
                     freertos_kernel freertos_hooks)
 
 set(ELF_FILE $<TARGET_FILE:${PROJECT_NAME}>)

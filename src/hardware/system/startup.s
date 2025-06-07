@@ -2,10 +2,10 @@
 .arm
 
 /* Interrupt Vector Table */
-.section .isr_vector, "ax"
+.section .isr_vector, "ax", %progbits
 .word Reset_Handler
 .word Undef_Handler
-.word SWI_Handler
+.word SPV_Handler
 .word Prefetch_Abort_Handler
 .word Data_Abort_Handler
 .word 0                  /* Reserved vector */
@@ -51,6 +51,13 @@ Reset_Handler:
     ORR R0, R0, #0x17
     MSR CPSR_c, R0
     LDR SP, =_abt_stack_end
+
+    /* Set SP for User/System mode (0x1F) */
+    MRS R0, CPSR
+    BIC R0, R0, #0x1F
+    ORR R0, R0, #0x1F
+    MSR CPSR_c, R0
+    LDR SP, =_usr_stack_end
 
     /* Work in Supervisor mode as deafult */
     /* Set SP for Supervisor mode (0x13) */
@@ -113,8 +120,8 @@ system_init:
 Undef_Handler:
     B .
 
-.weak SWI_Handler
-SWI_Handler:
+.weak SPV_Handler
+SPV_Handler:
     B .
 
 .weak Prefetch_Abort_Handler
@@ -137,3 +144,12 @@ FIQ_Handler:
 .weak Default_IRQ_Handler
 Default_IRQ_Handler:
     B .
+
+/* Peripheral Handlers */
+.weak TIMER0_IRQHandler
+.set TIMER0_IRQHandler, Default_IRQ_Handler
+
+.weak UART0_IRQHandler
+.set UART0_IRQHandler, Default_IRQ_Handler
+
+/* TODO: Add other */

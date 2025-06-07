@@ -14,12 +14,12 @@
             "request": "launch",
             "name": "Debug Local JLink",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.elf",
+            "executable": "${workspaceRoot}/cmake-build-debug/src/application/lpc2292-sdk2.elf",
             "loadFiles": [
-                "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.hex"
+                "${workspaceRoot}/cmake-build-debug/src/application/lpc2292-sdk2.hex"
             ],
             "symbolFiles": [
-                "${workspaceRoot}/cmake-build-image/src/application/lpc2292-sdk2.elf"
+                "${workspaceRoot}/cmake-build-debug/src/application/lpc2292-sdk2.elf"
             ],
             "servertype": "jlink",
             "serverpath": "D:/Tools/jlink/JLinkGDBServerCL.exe",
